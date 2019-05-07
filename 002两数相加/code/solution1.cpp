@@ -9,14 +9,14 @@ struct ListNode {
 };
 
 int listNodeLength(ListNode *list) {
-    if (list == NULL || list->next == NULL)
+    if (list == NULL)
     {
         return 0;
     }
     
     int size = 0;
     ListNode *tmpPoint = list;
-    while(tmpPoint->next != NULL) {
+    while(tmpPoint != NULL) {
         size++;
         tmpPoint = tmpPoint->next;
     }
@@ -29,19 +29,36 @@ public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
         int l1Length = listNodeLength(l1);
         int l2Length = listNodeLength(l2);
-
-        int min = l1Length;
-        if (l1Length>l2Length)
+        
+        int max = l1Length;
+        ListNode *maxListNode = l1;
+        int min = l2Length;
+        ListNode *minListNode = l2;
+        if (l1Length<l2Length)
         {
-            min = l2Length;   
+            max = l2Length;
+            maxListNode = l2;
+            
+            min = l1Length;
+            minListNode = l1;
         }
-
+        
+        ListNode *minTail = minListNode;
+        ListNode *maxTail = maxListNode;
+        while (maxTail != NULL) {
+            if (minTail -> next == NULL) {
+                minTail->next = new ListNode(0);
+            }
+            maxTail = maxTail -> next;
+            minTail = minTail->next;
+        }
+        
         int temp = 0;
-        ListNode* l1temp = l1;
-        ListNode* l2temp = l2;
+        ListNode* l1temp = minListNode;
+        ListNode* l2temp = maxListNode;
         ListNode *result = NULL;
         ListNode *resultTail = NULL;
-        for (int i = 0; i < min; ++i)
+        for (int i = 0; i < max; ++i)
         {
             int sum = l1temp->val + l2temp->val + temp;
             temp = sum/10;
@@ -51,83 +68,31 @@ public:
             {
                 result = node;
                 resultTail = result;
-            } 
-            else 
+            }
+            else
             {
                 resultTail->next = node;
                 resultTail = node;
             }
-
+            
             l1temp = l1temp->next;
             l2temp = l2temp->next;
-
-            if (i == min - 1)
-            {
-                if(temp > 0) 
-                {
-                    if (l1Length == l2Length)
-                    {
-                        resultTail->next = new ListNode(temp);
-                    } 
-                    else if(l1Length > l2Length) 
-                    {
-                        node = new ListNode(l1temp->val + temp);
-                        resultTail->next = node;
-                        resultTail = node;
-                        l1temp = l1temp->next;
-                        resultTail->next = l1temp;
-
-                    }
-                    else if(l1Length < l2Length)
-                    {
-
-                        node = new ListNode(l2temp->val + temp);
-                        resultTail->next = node;
-                        resultTail = node;
-                        l2temp = l2temp->next;
-                        resultTail->next = l2temp;
-                    }
-
-                } else {
-                    if (min == l1Length)
-                    {
-                        resultTail->next = l2temp;
-                    }
-                    else
-                    {
-                        resultTail->next = l1temp;
-                    }
-                }
-            }
-
         }
-
-        return result;
         
+        if (temp > 0) {
+            resultTail->next = new ListNode(temp);
+        }
+        return result;
     }
-    
 };
 
 int main()
 {
-    ListNode *l1 = new ListNode(9);
-    ListNode *tmp = l1;
-    for (int i=0; i<10; i++) {
-        ListNode *list = new ListNode(9);
-        tmp->next = list;
-        tmp = list;
-    }
-    
+    ListNode *l1 = new ListNode(1);
+   
     ListNode *l2 = new ListNode(9);
-    tmp = l2;
-    for (int i=0; i<10; i++) {
-        ListNode *list = new ListNode(9);
-        tmp->next = list;
-        tmp = list;
-    }
+    l2->next = new ListNode(9);
     Solution *s = new Solution();
     ListNode *list = s->addTwoNumbers(l1, l2);
-    
-    
     return 0;
 }
